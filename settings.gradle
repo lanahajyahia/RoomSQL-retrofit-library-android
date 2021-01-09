@@ -1,0 +1,4 @@
+include ':clients'
+include ':common'
+include ':garage'
+rootProject.name = "finalApp2020"
