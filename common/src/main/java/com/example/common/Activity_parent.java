@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -24,11 +25,8 @@ import java.util.concurrent.TimeUnit;
 public class Activity_parent extends AppCompatActivity {
 
 
-    //    private MaterialButton main_BTN_apiCall;
-//    private MaterialButton main_BTN_showAllLogs;
-//    private MaterialButton main_BTN_average;
     private TextView txt_entrytime, txt_last_exittime, txt_alltimes;
-
+    MaterialTextView txt_name, txt_cars, txt_open, txt_address;
 
     private long startTimeStamp = 0;
 
@@ -38,10 +36,45 @@ public class Activity_parent extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parent);
 
+        init();
+
+         time_func();
+
+        car_func();
+    }
+
+    private void car_func() {
+        downloadCars();
+    }
+
+    private void downloadCars() {
+        new CarController().fetchCar(new CarController.CallBack_Car() {
+            @Override
+            public void car(Car car) {
+                txt_name.setText("name: " + car.getName());
+                if (car.isOpen()) {
+                    txt_open.setText("opened");
+                } else {
+                    txt_open.setText("closed");
+                }
+                txt_address.setText("address: " + car.getAddress());
+                txt_cars.setText("Cars: " + car.getCars() );
+            }
+        });
+    }
+
+    private void init() {
         txt_last_exittime = findViewById(R.id.txt_last_exittime);
         txt_entrytime = findViewById(R.id.txt_entrytime);
         txt_alltimes = findViewById(R.id.txt_alltimes);
+        txt_cars = findViewById(R.id.txt_cars);
+        txt_name = findViewById(R.id.txt_name);
+        txt_address = findViewById(R.id.txt_address);
+        txt_open = findViewById(R.id.txt_open);
 
+    }
+
+    private void time_func() {
         String currentDateTimeString = new SimpleDateFormat("dd/MM HH:mm:ss").format(new Date());
         txt_entrytime.setText("Entry time: " + currentDateTimeString);
 
@@ -49,6 +82,9 @@ public class Activity_parent extends AppCompatActivity {
         readLogs();
     }
 
+    private void second_func() {
+
+    }
 
     @Override
     protected void onResume() {
@@ -106,13 +142,6 @@ public class Activity_parent extends AppCompatActivity {
                                 sum += tLog.duration;
 
                             }
-
-                            txt_alltimes.setText("all times: " + String.format("%02d min, %02d sec",
-                                    TimeUnit.MILLISECONDS.toMinutes(sum),
-                                    TimeUnit.MILLISECONDS.toSeconds(sum) -
-                                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(sum))));
-                            sb.append(new SimpleDateFormat("dd/MM HH:mm:ss").format(tLogs.get(tLogs.size() - 1).time));
-//                            tLogs.get(tLogs.size() - 1).id + " " +
                             try {
                                 Log.d("pttt", "Sum: " + sum + "   avg: " + (sum / count));
                                 //  sb.append("Sum: " + sum + "   avg: " + (sum / count));
@@ -121,6 +150,10 @@ public class Activity_parent extends AppCompatActivity {
                                 Log.d("pttt", "Invalid Data");
                                 sb.append("Invalid Data");
                             }
+                            txt_alltimes.setText("all times: " + time_format(sum));
+                            sb.append(new SimpleDateFormat("dd/MM HH:mm:ss").format(tLogs.get(tLogs.size() - 1).time));
+//                            tLogs.get(tLogs.size() - 1).id + " " +
+
 
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -134,6 +167,13 @@ public class Activity_parent extends AppCompatActivity {
                 });
             }
         }).start();
+    }
+
+    private String time_format(int sum) {
+        return String.format("%02d min, %02d sec",
+                TimeUnit.MILLISECONDS.toMinutes(sum),
+                TimeUnit.MILLISECONDS.toSeconds(sum) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(sum)));
     }
 //    private void readLogs() {
 //        new Thread(new Runnable() {
@@ -184,35 +224,35 @@ public class Activity_parent extends AppCompatActivity {
 //        }).start();
 //    }
 
-    private void apiCall() {
-        final String LINK = "https://pastebin.com/raw/WtvLGNXJ";
-
-        new Thread(new Runnable() {
-
-            public void run() {
-                String data = "";
-
-                try {
-                    long startTimeStamp = System.currentTimeMillis();
-                    URL url = new URL(LINK); //My text file location
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    conn.setConnectTimeout(60000);
-                    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    String str;
-                    while ((str = in.readLine()) != null) {
-                        data += str;
-                    }
-                    in.close();
-                    long duration = System.currentTimeMillis() - startTimeStamp;
-                    Log.d("pttt", "Api success in " + duration + " ms");
-
-                    MyTimeLogger.getInstance().addTlogTime("download_json_time", (int) duration);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
+//    private void apiCall() {
+//        final String LINK = "https://pastebin.com/raw/WtvLGNXJ";
+//
+//        new Thread(new Runnable() {
+//
+//            public void run() {
+//                String data = "";
+//
+//                try {
+//                    long startTimeStamp = System.currentTimeMillis();
+//                    URL url = new URL(LINK); //My text file location
+//                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//                    conn.setConnectTimeout(60000);
+//                    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//                    String str;
+//                    while ((str = in.readLine()) != null) {
+//                        data += str;
+//                    }
+//                    in.close();
+//                    long duration = System.currentTimeMillis() - startTimeStamp;
+//                    Log.d("pttt", "Api success in " + duration + " ms");
+//
+//                    MyTimeLogger.getInstance().addTlogTime("download_json_time", (int) duration);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }).start();
+//    }
 
 
 }

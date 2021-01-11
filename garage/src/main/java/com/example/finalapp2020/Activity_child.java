@@ -42,8 +42,7 @@ public class Activity_child extends Activity_parent {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-      //  setContentView(R.layout.activity_main);
-   //     setTextTitle("garage");
+
     }
 
 
