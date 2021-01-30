@@ -23,7 +23,6 @@ public class TLog {
 
     public TLog() { }
 
-  //  @Ignore
     public TLog(String tag, long time, int duration) {
         this.tag = tag;
         this.time = time;

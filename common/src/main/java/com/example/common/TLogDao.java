@@ -28,8 +28,7 @@ public interface TLogDao {
     List<TLog> getAllByTag(String tag);
 
 
-//    @Query("SELECT * FROM time_logs where tag LIKE :tag AND id =  MAX(id)")
-//    TLog getByTag(String tag);
+
 
 
 }
